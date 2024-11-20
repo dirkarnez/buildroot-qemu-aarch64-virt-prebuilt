@@ -120,7 +120,7 @@ jobs:
       #       cd cmake-build && cmake --build . --config Release && cmake --install . 
       
       - run: |
-          cd {{ env.libraryName }} && \
+          cd ${{ env.libraryName }} && \
           make qemu_x86_64_defconfig  && \
           make -j8
             
