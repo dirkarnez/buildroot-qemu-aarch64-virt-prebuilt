@@ -1,9 +1,9 @@
-name: cpp-cmake-mingw-prebuilt-release-actions-workflow
+name: buildroot-qemu-virt-prebuilt-release-actions-workflow
 on:
   push:
-    # # Sequence of patterns matched against refs/tags
-    # tags:
-    #   - '*' # Push events to matching v*, i.e. v1.0, v20.15.10
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - '*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
 permissions:
     contents: write
@@ -12,19 +12,8 @@ jobs:
   build:
     strategy:
       matrix:
-        compiler:
-        # - {
-        #     name: "x86_64-8.1.0-release-posix-seh-rt_v6-rev0",
-        #     url: "https://github.com/dirkarnez/cpp-tools/raw/main/x86_64-8.1.0-release-posix-seh-rt_v6-rev0.7z"
-        #   }
-        - {
-            name: "winlibs-x86_64-posix-seh-gcc-11.2.0-mingw-w64-9.0.0-r1",
-            url: "https://github.com/brechtsanders/winlibs_mingw/releases/download/11.2.0-12.0.1-9.0.0-r1/winlibs-x86_64-posix-seh-gcc-11.2.0-mingw-w64-9.0.0-r1.zip"
-          }
-        # - {
-        #     name: "msvc2019"
-        #   }
-
+        arch: [x86_64]
+        
     runs-on: ubuntu-latest
     env:
       libraryName: buildroot
@@ -121,7 +110,7 @@ jobs:
       
       - run: |
           cd ${{ env.libraryName }} && \
-          make qemu_x86_64_defconfig  && \
+          make qemu_${{ matrix.arch }}_defconfig  && \
           make -j8
             
   # qemu_aarch64_virt_defconfig
@@ -130,16 +119,16 @@ jobs:
   # -DZLIB_ROOT="%CD_LINUX%/zlib-v1.2.13-mingw64-x86_64-posix-seh-rev0-8.1.0" ^
   # -DZLIB_USE_STATIC_LIBS=ON ^
   
-      # - name: Archive Release
-      #   uses: thedoctor0/zip-release@master
-      #   with:
-      #     type: 'zip'
-      #     directory: "${{ env.libraryName }}/cmake-build/${{ env.cmakeInstallationPath }}"
-      #     filename: "${{ env.libraryName }}-${{ github.ref_name }}-${{ matrix.compiler.name }}.zip"
+      - name: Archive Release
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          directory: "${{ env.libraryName }}/output"
+          filename: "${{ env.libraryName }}-${{ matrix.arch }}-${{ github.ref_name }}.zip"
         
-      # - name: Release prebuilt
-      #   uses: ncipollo/release-action@v1
-      #   with:
-      #     artifacts: "${{ env.libraryName }}/cmake-build/${{ env.cmakeInstallationPath }}/${{ env.libraryName }}-${{ github.ref_name }}-${{ matrix.compiler.name }}.zip"
-      #     allowUpdates: true
-      #     token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release prebuilt
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "${{ env.libraryName }}/output/${{ env.libraryName }}-${{ matrix.arch }}-${{ github.ref_name }}.zip"
+          allowUpdates: true
+          token: ${{ secrets.GITHUB_TOKEN }}
