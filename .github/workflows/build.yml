@@ -37,7 +37,6 @@ jobs:
           ref: ${{ env.tagName }}
           path: ${{ env.libraryName }}
           submodules: true
-
           
       - name: Install MSYS2
         uses: msys2/setup-msys2@v2
@@ -107,11 +106,11 @@ jobs:
 
       - shell: msys2 {0}
         run: |
-            workspace=$(pwd) &&
-            export PATH="$workspace/mingw64:$workspace/mingw64/bin:$workspace/msys64/usr/bin:/usr/bin" &&
-            cd ${{ env.libraryName }} && 
-            g++ --version && 
-            mingw32-make.exe qemu_x86_64_defconfig
+          workspace=$(pwd) &&
+          export PATH="$workspace/mingw64:$workspace/mingw64/bin:$workspace/msys64/usr/bin:/usr/bin" &&
+          cd ${{ env.libraryName }} && 
+          g++ --version && 
+          make qemu_x86_64_defconfig
             
   # qemu_aarch64_virt_defconfig
             
