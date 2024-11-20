@@ -37,6 +37,13 @@ jobs:
           ref: ${{ env.tagName }}
           path: ${{ env.libraryName }}
           submodules: true
+
+          
+      - name: Install MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          install: make autoconf automake libtool autogen perl
           
       - name: download compiler
         if: ${{  matrix.compiler.url }}
@@ -97,18 +104,13 @@ jobs:
       #       -DBUILD_SHARED_LIBS=OFF ^
       #       -DCMAKE_INSTALL_PREFIX="cmake-build/${{ env.cmakeInstallationPath }}" -B./cmake-build &&^
       #       cd cmake-build && cmake --build . --config Release && cmake --install . 
-            
-      - name: set PATH, check mingw version, cmake generate, build and install
-        if: ${{ matrix.compiler.url }}
-        shell: cmd
+
+      - shell: msys2 {0}
         run: |
-            set PATH=^
-            ${{ github.workspace }}\mingw64;^
-            ${{ github.workspace }}\mingw64\bin;^
-            ${{ github.workspace }}\PortableGit-2.38.1-64-bit\bin;
-            set CD_LINUX=%CD:\=/%
-            gcc --version &&^
-            cd ${{ env.libraryName }} &&^
+            workspace=$(pwd) &&
+            export PATH="$workspace/mingw64:$workspace/mingw64/bin:$workspace/msys64/usr/bin:/usr/bin" &&
+            cd ${{ env.libraryName }} && 
+            g++ --version && 
             mingw32-make.exe qemu_x86_64_defconfig
             
   # qemu_aarch64_virt_defconfig
