@@ -123,12 +123,12 @@ jobs:
         uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
-          directory: "${{ env.libraryName }}/output"
+          directory: "${{ env.libraryName }}/output/images"
           filename: "${{ env.libraryName }}-${{ matrix.arch }}-${{ github.ref_name }}.zip"
         
       - name: Release prebuilt
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "${{ env.libraryName }}/output/${{ env.libraryName }}-${{ matrix.arch }}-${{ github.ref_name }}.zip"
+          artifacts: "${{ env.libraryName }}/output/images/${{ env.libraryName }}-${{ matrix.arch }}-${{ github.ref_name }}.zip"
           allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
